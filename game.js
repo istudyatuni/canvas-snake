@@ -1,6 +1,8 @@
 let cnv = document.getElementById('cnv');
 let ctx = cnv.getContext('2d');
 
+const sensitivity = 20;
+
 let w = window.innerWidth;
 let h = window.innerHeight;
 cnv.width = w;
@@ -44,11 +46,84 @@ function newSnake() {
     }
 }
 
+var touchStart = null; //Точка начала касания
+var touchPosition = null; //Текущая позиция
+
+//Перехватываем события
+cnv.addEventListener("touchstart", function (e) { TouchStart(e); }); //Начало касания
+cnv.addEventListener("touchmove", function (e) { TouchMove(e); }); //Движение пальцем по экрану
+//Пользователь отпустил экран
+cnv.addEventListener("touchend", function (e) { TouchEnd(e); });
+//Отмена касания
+cnv.addEventListener("touchcancel", function (e) { TouchEnd(e); });
+//for touchscreem
+function TouchStart(e) {
+    //Получаем текущую позицию касания
+    touchStart = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+    touchPosition = { x: touchStart.x, y: touchStart.y };
+}
+
+function TouchMove(e) {
+    //Получаем новую позицию
+    touchPosition = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+}
+
+function TouchEnd(e) {
+    CheckAction(); //Определяем, какой жест совершил пользователь
+
+    //Очищаем позиции
+    touchStart = null;
+    touchPosition = null;
+}
+swipeDir = null;
+function CheckAction()
+{
+    //console.log('check');
+    var d = //Получаем расстояния от начальной до конечной точек по обеим осям
+    {
+     x: touchStart.x - touchPosition.x,
+     y: touchStart.y - touchPosition.y
+    };
+
+    if(Math.abs(d.x) > Math.abs(d.y)) //Проверяем, движение по какой оси было длиннее
+    {
+     if(Math.abs(d.x) > sensitivity) //Проверяем, было ли движение достаточно длинным
+     {
+         if(d.x > 0) //Если значение больше нуля, значит пользователь двигал пальцем справа налево
+         {
+             //swipeDir = 3;
+             keyDown(37);
+         }
+         else //Иначе он двигал им слева направо
+         {
+            //swipeDir = 1;
+            keyDown(39);
+         }
+     }
+    }
+    else //Аналогичные проверки для вертикальной оси
+    {
+     if(Math.abs(d.y) > sensitivity)
+     {
+         if(d.y > 0) //Свайп вверх
+         {
+            //swipeDir = 0;
+            keyDown(38);
+         }
+         else //Свайп вниз
+         {
+            //swipeDir = 2;
+            keyDown(40);
+         }
+     }
+    }
+}
 setInterval(update, 150);
 document.onkeydown = keyDown;
 
 update();
 function update() {
+
     ctx.clearRect(0, 0, w, h);
     ctx.fillStyle = '#ddd';
     for (let i = 0; i <= sw; i++) {
@@ -101,19 +176,33 @@ function update() {
 function keyDown(e) {
     if(dirChanged) return;
     let newDir = 0;
-    switch(e.keyCode) {
-        case 87: case 38:
+    console.log('change dir ' + newDir);
+    if(w >= 1000) {
+        switch(e.keyCode) {
+            case 87: case 38:
+                newDir = 0;
+                break;
+            case 68: case 39:
+                newDir = 1;
+                break;
+            case 83: case 40:
+                newDir = 2;
+                break;
+            case 65: case 37:
+                newDir = 3;
+                break;
+        }
+    }
+    if(w < 1500) {//предположим что если экран уже чем 1500 пикселей то у него сенсорное управление
+        if(e == 38) {
             newDir = 0;
-            break;
-        case 68: case 39:
+        } else if(e == 39) {
             newDir = 1;
-            break;
-        case 83: case 40:
+        }else if(e == 40) {
             newDir = 2;
-            break;
-        case 65: case 37:
+        }else if(e == 37) {
             newDir = 3;
-            break;
+        }
     }
     if(((dir + 2) % 4) != newDir) {
         dir = newDir;
