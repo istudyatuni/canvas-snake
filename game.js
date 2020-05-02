@@ -48,7 +48,7 @@ function newSnake() {
 
 var touchStart = null; //Точка начала касания
 var touchPosition = null; //Текущая позиция
-
+cnv.addEventListener("keypress", function (e) { playWhen(e); })
 //Перехватываем события
 cnv.addEventListener("touchstart", function (e) { TouchStart(e); }); //Начало касания
 cnv.addEventListener("touchmove", function (e) { TouchMove(e); }); //Движение пальцем по экрану
@@ -110,9 +110,17 @@ animate = setInterval(update, 150);
 document.onkeydown = keyDown;
 function pause() {
     clearInterval(animate);
+    isPause = !isPause;
+}
+function playWhen(e) {
+    console.log('here');
+    if(e.code == 32 && isPause) {
+        play();
+    }
 }
 function play() {
-    animate = setInterval(update, 150);
+    animate = setInterval(update, 0);
+    isPause = !isPause;
 }
 
 update();
@@ -165,32 +173,47 @@ function update() {
     }
     dirChanged = false;
 }
-let isPause = false;
+var isPause = false;
 function keyDown(e) {
     if(dirChanged) return;
     let newDir = 0;
-    if(w >= 1000) {
+    console.log(e.keyCode);
+    if(w >= 1500) {
         switch(e.keyCode) {
             case 87: case 38:
                 newDir = 0;
+                if (isPause) {
+                    play();
+                    isPause = !isPause;
+                }
                 break;
             case 68: case 39:
                 newDir = 1;
+                if (isPause) {
+                    play();
+                    isPause = !isPause;
+                }
                 break;
             case 83: case 40:
                 newDir = 2;
+                if (isPause) {
+                    play();
+                    isPause = !isPause;
+                }
                 break;
             case 65: case 37:
                 newDir = 3;
+                if (isPause) {
+                    play();
+                    isPause = !isPause;
+                }
                 break;
             case 80:
                 console.log(isPause);
                 break;
-            case 32:
+            case 71:
                 if(!isPause) {
                     pause();
-                } else if (isPause) {
-                    play();
                 }
                 isPause = !isPause;
                 return;
