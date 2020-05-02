@@ -89,41 +89,34 @@ function CheckAction()
     {
      if(Math.abs(d.x) > sensitivity) //Проверяем, было ли движение достаточно длинным
      {
-         if(d.x > 0) //Если значение больше нуля, значит пользователь двигал пальцем справа налево
-         {
-             //swipeDir = 3;
+         if(d.x > 0) {//Если значение больше нуля, значит пользователь двигал пальцем справа налево
              keyDown(37);
-         }
-         else //Иначе он двигал им слева направо
-         {
-            //swipeDir = 1;
+         } else {//Иначе он двигал им слева направо
             keyDown(39);
          }
      }
     }
-    else //Аналогичные проверки для вертикальной оси
-    {
-     if(Math.abs(d.y) > sensitivity)
-     {
-         if(d.y > 0) //Свайп вверх
-         {
-            //swipeDir = 0;
-            keyDown(38);
-         }
-         else //Свайп вниз
-         {
-            //swipeDir = 2;
-            keyDown(40);
-         }
-     }
+    else {//Аналогичные проверки для вертикальной оси
+        if(Math.abs(d.y) > sensitivity) {
+            if(d.y > 0) {//Свайп вверх
+                keyDown(38);
+            } else {//Свайп вниз
+                keyDown(40);
+            }
+        }
     }
 }
-setInterval(update, 150);
+animate = setInterval(update, 150);
 document.onkeydown = keyDown;
+function pause() {
+    clearInterval(animate);
+}
+function play() {
+    animate = setInterval(update, 150);
+}
 
 update();
 function update() {
-
     ctx.clearRect(0, 0, w, h);
     ctx.fillStyle = '#ddd';
     for (let i = 0; i <= sw; i++) {
@@ -172,11 +165,10 @@ function update() {
     }
     dirChanged = false;
 }
-
+let isPause = false;
 function keyDown(e) {
     if(dirChanged) return;
     let newDir = 0;
-    console.log('change dir ' + newDir);
     if(w >= 1000) {
         switch(e.keyCode) {
             case 87: case 38:
@@ -191,6 +183,17 @@ function keyDown(e) {
             case 65: case 37:
                 newDir = 3;
                 break;
+            case 80:
+                console.log(isPause);
+                break;
+            case 32:
+                if(!isPause) {
+                    pause();
+                } else if (isPause) {
+                    play();
+                }
+                isPause = !isPause;
+                return;
         }
     }
     if(w < 1500) {//предположим что если экран уже чем 1500 пикселей то у него сенсорное управление
