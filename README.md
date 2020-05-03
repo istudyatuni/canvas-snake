@@ -1,3 +1,3 @@
 # JS snake
 
-![alt text](https://github.com/istudyatuni/canvas-snake/screenshots/screenshot-1.png "Screenshot 1")
+![screenshot](https://github.com/istudyatuni/canvas-snake/blob/master/screenshots/screenshot-1.png "Screenshot 1")
