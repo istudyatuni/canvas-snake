@@ -126,14 +126,16 @@ function play() {
 update();
 function update() {
     ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = '#ddd';
+    ctx.fillStyle = '#000';//'#ddd';
+    ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = '#212121';//'#ddd';
     for (let i = 0; i <= sw; i++) {
         ctx.fillRect(i * s, 0, border, sh * s + border);
     }
     for (let i = 0; i <= sh; i++) {
         ctx.fillRect(0, i * s, sw * s + border, border);
     }
-  ctx.fillStyle = '#47d';
+  ctx.fillStyle = '#F40404';//'#47d';
     ctx.fillRect(foodX * s + border, foodY * s + border, s - border, s - border);
   ctx.fillStyle = '#57E959';//'#'+Math.floor(Math.random()*2**24).toString(16).padStart(6, '0');
     let dx = snake[0].x;
@@ -177,7 +179,7 @@ var isPause = false;
 function keyDown(e) {
     if(dirChanged) return;
     let newDir = 0;
-    console.log(e.keyCode);
+    //console.log(e.keyCode);
     if(w >= 1500) {
         switch(e.keyCode) {
             case 87: case 38:
@@ -211,9 +213,11 @@ function keyDown(e) {
             case 80:
                 console.log(isPause);
                 break;
-            case 71:
+            case 32:
                 if(!isPause) {
                     pause();
+                } else if(isPause) {
+                    play();
                 }
                 isPause = !isPause;
                 return;
